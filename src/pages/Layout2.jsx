@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import emailjs from "emailjs-com";
@@ -10,24 +10,23 @@ function Layout2() {
   const token = localStorage.getItem("token");
   const doctorId = localStorage.getItem("docId");
 
-  
   const sendEmailToPatient = (appointment, status) => {
     const emailData = {
-      appointment_time: appointment.timeSlot, 
-      to_name: appointment.patientName,        
-      doctor_name: doctorName, 
-      appointment_time: appointment.timeSlot,  
-      message: `has been ${status}`, 
-      to_email: appointment.patient_email
-           
+      appointment_time: appointment.timeSlot,
+      to_name: appointment.patientName,
+      doctor_name: doctorName,
+      message: `has been ${status}`,
+      to_email: appointment.patient_email,
     };
+
     console.log("send email function is running...", emailData);
+
     emailjs
       .send(
-        "service_omortcj", 
-        "template_4uloria",  
+        "service_omortcj",
+        "template_4uloria",
         emailData,
-        "doD97DMTtFOIjZUqo"  
+        "doD97DMTtFOIjZUqo"
       )
       .then(
         (result) => {
@@ -39,48 +38,45 @@ function Layout2() {
       );
   };
 
-  // Function to update appointment status
   const updateAppointmentStatus = async (appointmentId, status) => {
     try {
-      const res = await axios.put(
+      await axios.put(
         `https://doctor-app-l8mc.onrender.com/api/v1/appointments/updateStatus/${appointmentId}`,
         { status },
         { headers: { Authorization: "Bearer " + token } }
       );
-  
-      // Find the updated appointment details
+
       const updatedAppointment = appointments.find(
         (appt) => appt._id === appointmentId
       );
-  
+
       if (updatedAppointment) {
-        // Send email notification to the patient
         sendEmailToPatient(updatedAppointment, status);
       }
-  
-      // Refresh the appointment list
-      getAppointments();
+
+      getAppointments(); // Refresh the list
     } catch (error) {
       console.error(`Error updating appointment status: ${error}`);
     }
   };
-  
-  // Fetch doctor data
-  const getDoctorData = async () => {
+
+  const getDoctorData = useCallback(async () => {
     if (!token) return;
     try {
-      const res = await axios.get("https://doctor-app-l8mc.onrender.com/api/v1/doctor/getDoctorData", {
-        headers: { Authorization: "Bearer " + token },
-      });
+      const res = await axios.get(
+        "https://doctor-app-l8mc.onrender.com/api/v1/doctor/getDoctorData",
+        {
+          headers: { Authorization: "Bearer " + token },
+        }
+      );
       setDoctorName(res.data.data.name);
       localStorage.setItem("docId", res.data.data.id);
     } catch (error) {
       console.error("Error fetching doctor data:", error);
     }
-  };
+  }, [token]);
 
-  // Fetch appointments
-  const getAppointments = async () => {
+  const getAppointments = useCallback(async () => {
     if (!doctorId) return;
     try {
       const res = await axios.get(
@@ -90,9 +86,8 @@ function Layout2() {
     } catch (error) {
       console.error("Error fetching appointments:", error);
     }
-  };
+  }, [doctorId]);
 
- 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("docId");
@@ -102,7 +97,7 @@ function Layout2() {
   useEffect(() => {
     getDoctorData();
     getAppointments();
-  }, [token]);
+  }, [getDoctorData, getAppointments]);
 
   return (
     <div className="p-2 h-screen">
@@ -163,16 +158,12 @@ function Layout2() {
                       <strong>Status:</strong> {appointment.status}
                     </p>
 
-                    {/* Approve/Reject Buttons */}
                     {appointment.status === "pending" && (
                       <div className="flex gap-4 mt-3">
                         <button
                           className="bg-green-500 text-white px-3 py-1 rounded"
                           onClick={() =>
-                             updateAppointmentStatus(
-                              appointment._id,
-                              "approved"
-                            )
+                            updateAppointmentStatus(appointment._id, "approved")
                           }
                         >
                           Approve

@@ -20,7 +20,7 @@ const AppointmentList = () => {
     };
 
     fetchAppointments();
-  }, []);
+  }, [userId]);
 
   return (
     <div className="p-6 max-w-md mx-auto bg-white shadow-lg rounded-lg">

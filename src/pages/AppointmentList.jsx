@@ -8,7 +8,7 @@ const AppointmentList = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(`/api/v1/appointments/Myappointments?userId=${userId}`,);  
+        const response = await axios.get(`https://doctor-app-l8mc.onrender.com/api/v1/appointments/Myappointments?userId=${userId}`,);  
         setAppointments(response.data.data);  
         console.log(response.data.data);
         

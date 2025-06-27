@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { PatientContext } from "./PatientProvider";
+ 
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -23,10 +24,10 @@ const Layout = () => {
             <hr className="my-4 border-gray-300 w-full" />
           </div>
           <div className="mt-12 w-full">
-            <div className="flex items-center px-4 py-2 rounded-md my-2 gap-5 text-lg">
+            {/* <div className="flex items-center px-4 py-2 rounded-md my-2 gap-5 text-lg">
               <i className="fa-solid fa-house"></i>
               <Link to="/" className="text-lg text-white">Home</Link>
-            </div>
+            </div> */}
             <div className="flex items-center px-4 py-2 rounded-md my-2 gap-5 text-lg">
               <i className="fa-solid fa-list"></i>
               <Link to="/AppoinmentList" className="text-lg text-white">Appointments</Link>

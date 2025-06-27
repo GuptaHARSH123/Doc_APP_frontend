@@ -9,7 +9,7 @@ const RegisterPage = () => {
   
   const onfinishHandler = async (values) => {
     try {
-      const res = await axios.post("/api/v1/user/RegisterPage", values);
+      const res = await axios.post("https://doctor-app-l8mc.onrender.com/api/v1/user/RegisterPage", values);
       if (res.data.success) {
         message.success("Register Successfully!");
         navigate("/login");

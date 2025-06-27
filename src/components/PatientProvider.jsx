@@ -1,20 +1,26 @@
-import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
-
-export const PatientContext = createContext();
+import { useEffect , useState , createContext } from "react";
+export const PatientContext = createContext({
+  patientData: null,
+  setPatientData: () => {},
+  fetchPatientData: () => {},
+});
 
 export const PatientProvider = ({ children }) => {
   const [patientData, setPatientData] = useState(null);
-  const token = localStorage.getItem("token");
 
   const fetchPatientData = async () => {
+    const token = localStorage.getItem("token");
     if (!token) return;
     try {
-      const res = await axios.get("/api/v1/user/getUserData", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        "https://doctor-app-l8mc.onrender.com/api/v1/user/getUserData",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setPatientData(res.data.data);
       localStorage.setItem("_id", res.data.data.id);
     } catch (error) {
@@ -24,10 +30,10 @@ export const PatientProvider = ({ children }) => {
 
   useEffect(() => {
     fetchPatientData();
-  }, [token]);
+  }, []);
 
   return (
-    <PatientContext.Provider value={{ patientData, setPatientData }}>
+    <PatientContext.Provider value={{ patientData, setPatientData, fetchPatientData }}>
       {children}
     </PatientContext.Provider>
   );

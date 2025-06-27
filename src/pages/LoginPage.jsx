@@ -1,43 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Input, message, Select } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
- 
+import { PatientContext } from "../components/PatientProvider"; // ✅ Adjust path if needed
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [loginType, setLoginType] = useState("user"); // Default login type is user
-  const linkTo = loginType === "user" ? "/RegisterPage" : "/doctorRegisterPage"
+  const { fetchPatientData } = useContext(PatientContext); // ✅ Use context
 
-  // Handle change in login type (User or Doctor)
+  const linkTo =
+    loginType === "user" ? "/RegisterPage" : "/doctorRegisterPage";
+
   const handleLoginTypeChange = (value) => {
     setLoginType(value);
   };
 
   const onFinishHandler = async (values) => {
-     
     try {
-      // Select the endpoint based on the login type
-       
-      const endpoint = loginType === "user" ? "/api/v1/user/login" : "/api/v1/doctor/doctorLogin";
-      
-      const res = await axios.post(endpoint, values);
+      const baseUrl = "https://doctor-app-l8mc.onrender.com";
+      const endpoint =
+        loginType === "user"
+          ? "/api/v1/user/login"
+          : "/api/v1/doctor/doctorLogin";
+
+      const res = await axios.post(`${baseUrl}${endpoint}`, values);
 
       if (res.data.success) {
         localStorage.setItem("token", res.data.token);
         message.success("Login Successfully");
-        if(loginType=="user"){
+
+        if (loginType === "user") {
+          await fetchPatientData(); // ✅ Immediately fetch patient data
           navigate("/");
-        }else{
-           navigate("/Layout2");
+        } else {
+          navigate("/Layout2"); // Doctor dashboard
         }
-        
       } else {
         message.error(res.data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       message.error("Something went wrong");
     }
   };
@@ -55,9 +58,9 @@ const LoginPage = () => {
           </h3>
 
           <Form.Item label="Login As" name="loginType">
-            <Select 
-              value={loginType} 
-              onChange={handleLoginTypeChange} 
+            <Select
+              value={loginType}
+              onChange={handleLoginTypeChange}
               className="w-full"
             >
               <Select.Option value="user">User Login</Select.Option>
@@ -65,28 +68,32 @@ const LoginPage = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Email" name="email">
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: "Please enter your email" }]}
+          >
             <Input
               type="email"
-              required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </Form.Item>
 
-          <Form.Item label="Password" name="password">
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: "Please enter your password" }]}
+          >
             <Input
               type="password"
-              required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </Form.Item>
-           
-         
+
           <Link to={linkTo} className="block text-blue-600 hover:underline">
-          {
-            loginType === 'user' ? ' Not a user? Register here' : ' New Doctor? Register here'
-          }
-             
+            {loginType === "user"
+              ? "Not a user? Register here"
+              : "New Doctor? Register here"}
           </Link>
 
           <button

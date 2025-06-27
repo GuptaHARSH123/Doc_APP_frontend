@@ -33,7 +33,7 @@ const AppointmentBookingPage = () => {
     e.preventDefault();
   
     try{
-      await axios.post('/api/v1/appointments/book', {
+      await axios.post('https://doctor-app-l8mc.onrender.com/api/v1/appointments/book', {
         doctorId: doctor._id,
         userId,
         patientName: customerName,

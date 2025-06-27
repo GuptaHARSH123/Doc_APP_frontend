@@ -43,7 +43,7 @@ function Layout2() {
   const updateAppointmentStatus = async (appointmentId, status) => {
     try {
       const res = await axios.put(
-        `/api/v1/appointments/updateStatus/${appointmentId}`,
+        `https://doctor-app-l8mc.onrender.com/api/v1/appointments/updateStatus/${appointmentId}`,
         { status },
         { headers: { Authorization: "Bearer " + token } }
       );
@@ -69,7 +69,7 @@ function Layout2() {
   const getDoctorData = async () => {
     if (!token) return;
     try {
-      const res = await axios.get("/api/v1/doctor/getDoctorData", {
+      const res = await axios.get("https://doctor-app-l8mc.onrender.com/api/v1/doctor/getDoctorData", {
         headers: { Authorization: "Bearer " + token },
       });
       setDoctorName(res.data.data.name);
@@ -84,7 +84,7 @@ function Layout2() {
     if (!doctorId) return;
     try {
       const res = await axios.get(
-        `/api/v1/appointments/appointments?doctorId=${doctorId}`
+        `https://doctor-app-l8mc.onrender.com/api/v1/appointments/appointments?doctorId=${doctorId}`
       );
       setAppointments(res.data.data);
     } catch (error) {
@@ -92,7 +92,7 @@ function Layout2() {
     }
   };
 
-  // Logout function
+ 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("docId");

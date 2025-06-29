@@ -13,7 +13,7 @@ const DoctorList = () => {
     const fetchDoctors = async () => {
   setLoading(true);
   try {
-    const endpoint = `http://localhost:8080/api/v1/doctor/doctors/search${query ? `?query=${query}` : ''}`;
+    const endpoint = `https://doctor-app-l8mc.onrender.com/api/v1/doctor/doctors/search${query ? `?query=${query}` : ''}`;
     const response = await axios.get(endpoint);
     setDoctorsList(response.data.data);
   } catch (error) {
